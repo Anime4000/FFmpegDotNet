@@ -5,11 +5,14 @@ using System.Text;
 
 namespace FFmpegDotNet.Stream
 {
-	public class StreamGeneral
+	public class Get
 	{
-		public StreamGeneral(string filePath)
+		public Get(string filePath)
 		{
-
+			foreach (var item in Print(filePath))
+			{
+				
+			}
 		}
 	}
 }

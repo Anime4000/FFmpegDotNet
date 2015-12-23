@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace FFmpegDotNet.Stream
+namespace FFmpegDotNet
 {
-	public class StreamAudio
+	public class FFmpegProcess
 	{
+		public void Print(string fileMedia)
+		{
 
+		}
 	}
 }

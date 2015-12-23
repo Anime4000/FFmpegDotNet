@@ -5,8 +5,8 @@ using System.Text;
 
 namespace FFmpegDotNet.Stream
 {
-	public class StreamSubtitle
+	public class Subtitle : General
 	{
-
+		
 	}
 }
