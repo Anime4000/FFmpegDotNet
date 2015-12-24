@@ -12,12 +12,12 @@ namespace FFmpegDotNet
 		{
 			var p = new Process();
 
-			p.StartInfo = new ProcessStartInfo(OS.Terminal, $"{exe} -i {inFile} -y {outFile} {args}")
+			p.StartInfo = new ProcessStartInfo(OS.Terminal, $"{FFmpeg.Bin} -i {inFile} -y {outFile} {args}")
 			{
 				UseShellExecute = false,
 				CreateNoWindow = true,
 			};
-
+			
 			p.Start();
 			p.WaitForExit();
 		}

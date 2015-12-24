@@ -9,7 +9,7 @@ namespace FFmpegDotNet.Stream
 	{
 		public Get(string filePath)
 		{
-			foreach (var item in Print(filePath))
+			foreach (var item in FFmpeg.Process.Print(filePath))
 			{
 				
 			}
