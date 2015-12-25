@@ -11,8 +11,22 @@ namespace FFmpegDotNet
 		internal Run(string inFile, string outFile, string args)
 		{
 			var p = new Process();
+			var c = string.Empty;
+			var a = string.Empty;
+			var s = $"{FFmpeg.Bin} -i \"{inFile}\" -y \"{outFile}\" {args}";
 
-			p.StartInfo = new ProcessStartInfo(OS.Terminal, $"{FFmpeg.Bin} -i {inFile} -y {outFile} {args}")
+			if (OS.IsWindows)
+			{
+				c = "cmd";
+				a = $"/c {s}";
+			}
+			else
+			{
+				c = "sh";
+				a = $"-c '{s}'";
+			}
+
+			p.StartInfo = new ProcessStartInfo(c, a)
 			{
 				UseShellExecute = false,
 				CreateNoWindow = true,

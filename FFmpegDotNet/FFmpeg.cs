@@ -10,21 +10,21 @@ namespace FFmpegDotNet
 	{
 		public static string Bin { get; set; } = Path.Combine("ffmpeg");
 
-		public class Stream
+		public class Stream : Get
 		{
-			public Stream(string filePath)
+			public Stream(string filePath) : base(filePath)
 			{
 
 			}
-
-
 		}
 
 		public class Process
 		{
-			public string Print(string filePath)
+			public string[] Print(string filePath)
 			{
-				return string.Empty;
+				var f = Path.Combine(Path.GetTempPath(), $"{new Random().Next(0, 999999):D6}.imouto");
+				new Run(filePath, string.Empty, $"2> {f}");
+				return File.ReadAllLines(f);
 			}
 		}
 	}

@@ -43,11 +43,13 @@
     <Compile Include="OS.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Run.cs" />
-    <Compile Include="Stream\Audio.cs" />
-    <Compile Include="Stream\General.cs" />
-    <Compile Include="Stream\Get.cs" />
-    <Compile Include="Stream\Subtitle.cs" />
-    <Compile Include="Stream\Video.cs" />
+    <Compile Include="StreamAudio.cs" />
+    <Compile Include="StreamCommon.cs" />
+    <Compile Include="StreamGeneral.cs" />
+    <Compile Include="Get.cs" />
+    <Compile Include="StreamSubtitle.cs" />
+    <Compile Include="StreamVideo.cs" />
+    <Compile Include="Test.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

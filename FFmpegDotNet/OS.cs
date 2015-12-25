@@ -65,17 +65,6 @@ namespace FFmpegDotNet
 			}
 		}
 
-		public static string Terminal
-		{
-			get
-			{
-				if (IsWindows)
-					return "cmd";
-				else
-					return "sh";
-			}
-		}
-
 		/// <summary>
 		/// Return null device by specific OS
 		/// </summary>
