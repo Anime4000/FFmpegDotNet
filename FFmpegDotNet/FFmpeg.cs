@@ -9,6 +9,7 @@ namespace FFmpegDotNet
 	public class FFmpeg
 	{
 		public static string Bin { get; set; } = Path.Combine("ffmpeg");
+		public static string Probe { get; set; } = Path.Combine("ffprobe");
 
 		public class Stream : Get
 		{
@@ -20,11 +21,11 @@ namespace FFmpegDotNet
 
 		public class Process
 		{
-			public string[] Print(string filePath)
+			public string Print(string filePath)
 			{
-				var f = Path.Combine(Path.GetTempPath(), $"{new Random().Next(0, 999999):D6}.imouto");
-				new Run(filePath, string.Empty, $"2> {f}");
-				return File.ReadAllLines(f);
+				var f = Path.Combine(Path.GetTempPath(), $"imouto-{new Random().Next(0, 999999):D6}.xml");
+				new Run(filePath, f);
+				return f;
 			}
 		}
 	}
