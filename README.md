@@ -9,7 +9,7 @@ For example media index/id, some are start from `1`, some are start from `0`. Me
 ## Usage
 Using `FFmpegDotNet` very stright forward
 
-Capture media properties
+### Capture media properties
 ```cs
 // Set FFmpeg & FFprobe install path
 FFmpeg.Bin = "/bin/ffmpeg";
@@ -99,14 +99,13 @@ Language: eng
 Codec: ass
 ```
 
-Not only display properties, also able to do other thing like
-```
+### Processing
+```cs
 // Extract Attachment like fonts
 new FFmpeg.Process().ExtractAttachment("/home/anime4000/kawaii.mp4", "/home/anime4000/fonts/");
-```
 
-## To Do
-Capable to doing encoding, decoding & extracting
+// to do: doing encoding & decoding in the future
+```
 
 ## Contribute
 This code written in C# 6.0, so you need Visual Studio 2015
