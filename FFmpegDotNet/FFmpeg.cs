@@ -21,9 +21,9 @@ namespace FFmpegDotNet
 
 		public class Process
 		{
-			public string Print(string filePath)
+			internal string Print(string filePath)
 			{
-				var f = Path.Combine(Path.GetTempPath(), $"imouto-{new Random().Next(0, 999999):D6}.xml");
+				var f = Path.Combine(Path.GetTempPath(), $"nemu_{new Random().Next(0, 9999999):D7}.xml");
 				new Run(filePath, f);
 				return f;
 			}

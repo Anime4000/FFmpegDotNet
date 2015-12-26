@@ -16,6 +16,16 @@ namespace FFmpegDotNet
 		public Get(string filePath)
 		{
 			var xml = XDocument.Load(new FFmpeg.Process().Print(filePath));
+			var format = from a in xml.Descendants("format")
+						 select new
+						 {
+							 fmt = a.Attribute("format_name").Value,
+							 fmtlong = a.Attribute("format_long_name").Value,
+							 duration = a.Attribute("duration").Value,
+							 size = a.Attribute("size").Value,
+							 bitrate = a.Attribute("bit_rate").Value
+						 };
+
 			var video = from a in xml.Descendants("stream")
 						where string.Equals("video", (string)a.Attribute("codec_type"))
 						select new
@@ -51,16 +61,31 @@ namespace FFmpegDotNet
 							   codec = a.Attribute("codec_name").Value,
 						   };
 
+			foreach (var item in format)
+			{
+				FormatName = item.fmt;
+				FormatNameFull = item.fmtlong;
+				Duration = float.Parse(item.duration);
+				FileSize = ulong.Parse(item.size);
+				BitRate = ulong.Parse(item.bitrate);
+
+				break; // single only
+			}
+
 			foreach (var item in video)
 			{
 				int bpc = 8;
 				int w = 0;
 				int h = 0;
-				float fps = 0;
+				float num = 0;
+				float den = 0;
 
 				int.TryParse(item.bpc, out bpc);
 				int.TryParse(item.width, out w);
 				int.TryParse(item.height, out h);
+
+				float.TryParse(item.fps.Split('/')[0], out num);
+				float.TryParse(item.fps.Split('/')[1], out den);
 
 				Video.Add(new StreamVideo
 				{
@@ -71,7 +96,7 @@ namespace FFmpegDotNet
 					BitPerColour = bpc,
 					Width = w,
 					Height = h,
-					FrameRate = float.Parse(item.fps.Split('/')[0]) / float.Parse(item.fps.Split('/')[1])
+					FrameRate = num / den
 				});
 			}
 
@@ -121,9 +146,15 @@ namespace FFmpegDotNet
 				});
 			}
 
-			//File.Delete(filePath);
+			File.Delete(filePath);
 		}
 
+		public string FormatName { get; internal set; }
+		public string FormatNameFull { get; internal set; }
+		public float Duration { get; internal set; }
+		public ulong FileSize { get; internal set; }
+		public ulong BitRate { get; internal set; }
+		
 		public List<StreamVideo> Video { get; internal set; } = new List<StreamVideo>();
 		public List<StreamAudio> Audio { get; internal set; } = new List<StreamAudio>();
 		public List<StreamSubtitle> Subtitle { get; internal set; } = new List<StreamSubtitle>();

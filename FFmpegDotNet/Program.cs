@@ -15,6 +15,8 @@ namespace FFmpegDotNet
 
 			Console.Write("FFmpegDotNet (module for IFME)\n\n");
 
+			Console.WriteLine($"{gg.FormatName} = {gg.FormatNameFull}\n{gg.FileSize}");
+
 			foreach (var item in gg.Video)
 			{
 				Console.Write($"{item.Id}\n{item.Language}\n{item.Codec}\n{item.PixelFormat}\n{item.BitPerColour}\n{item.Width}x{item.Height}\n{item.FrameRate}fps\n");

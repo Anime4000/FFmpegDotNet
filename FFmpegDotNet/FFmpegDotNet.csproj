@@ -49,7 +49,6 @@
     <Compile Include="Run.cs" />
     <Compile Include="StreamAudio.cs" />
     <Compile Include="StreamCommon.cs" />
-    <Compile Include="StreamGeneral.cs" />
     <Compile Include="Get.cs" />
     <Compile Include="StreamSubtitle.cs" />
     <Compile Include="StreamVideo.cs" />
