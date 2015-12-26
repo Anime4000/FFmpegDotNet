@@ -45,7 +45,7 @@ foreach (var item in info.Audio)
 	Console.Write($"Sample Rate: {item.SampleRate}Hz\n");
 	Console.Write($"Bit Depth: {item.BitDepth} Bit (raw)\n");
 	Console.Write($"Channels: {item.Channel}\n");
-  Console.Write($"\n");
+	Console.Write($"\n");
 }
 
 foreach (var item in info.Subtitle)
@@ -99,7 +99,14 @@ Language: eng
 Codec: ass
 ```
 
-Now you get the idea, have fun!
+Not only display properties, also able to do other thing like
+```
+// Extract Attachment like fonts
+new FFmpeg.Process().ExtractAttachment("/home/anime4000/kawaii.mp4", "/home/anime4000/fonts/");
+```
 
 ## To Do
 Capable to doing encoding, decoding & extracting
+
+## Contribute
+This code written in C# 6.0, so you need Visual Studio 2015
