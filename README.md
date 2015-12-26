@@ -58,5 +58,48 @@ foreach (var item in info.Subtitle)
 }
 ```
 
+With that code, it will display like this (console)
+```
+Format: matroska,webm (Matroska / WebM)
+File Size: 477782006
+
+Type: Video
+ID: 0
+Language: jpn
+Codec: h264
+Pixel Format: yuv420p
+Bit per Colour: 8
+Resolution: 1280x720
+Frame Rate: 23.97602fps
+
+Type: Audio
+ID: 1
+Language: eng
+Codec: aac
+Sample Rate: 48000Hz
+Bit Depth: 16 Bit (raw)
+Channels: 2
+
+Type: Audio
+ID: 2
+Language: jpn
+Codec: aac
+Sample Rate: 48000Hz
+Bit Depth: 16 Bit (raw)
+Channels: 2
+
+Type: Subtitle
+ID: 3
+Language: eng
+Codec: ass
+
+Type: Subtitle
+ID: 4
+Language: eng
+Codec: ass
+```
+
+Now you get the idea, have fun!
+
 ## To Do
 Capable to doing encoding, decoding & extracting
