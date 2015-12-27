@@ -24,8 +24,13 @@ namespace FFmpegDotNet
 			internal string Print(string filePath)
 			{
 				var f = Path.Combine(Path.GetTempPath(), $"nemu_{new Random().Next(0, 9999999):D7}.xml");
-				new Run(filePath, f);
+				new Run().Execute($"\"{Probe}\" -print_format xml -show_format -show_streams \"{filePath}\" > \"{f}\"", Path.GetTempPath());
 				return f;
+			}
+
+			public void ExtractAttachment(string filePath, string folderDest)
+			{
+				new Run().Execute($"\"{Bin}\" -dump_attachment:t \"\" -i \"{filePath}\" -y", folderDest);
 			}
 		}
 	}

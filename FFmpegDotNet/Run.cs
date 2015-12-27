@@ -8,17 +8,7 @@ namespace FFmpegDotNet
 {
 	internal class Run
 	{
-		internal Run(string inFile, string probeFile)
-		{
-			Execute($"\"{FFmpeg.Probe}\" -print_format xml -show_format -show_streams \"{inFile}\" > \"{probeFile}\"");
-        }
-
-		internal Run(string inFile, string outFile, string args)
-		{
-			Execute($"\"{FFmpeg.Bin}\" -i \"{inFile}\" -y \"{outFile}\" {args}");
-		}
-
-		private int Execute(string args)
+		internal int Execute(string args, string workDir)
 		{
 			var p = new Process();
 			var c = string.Empty;
@@ -39,6 +29,7 @@ namespace FFmpegDotNet
 
 			p.StartInfo = new ProcessStartInfo(c, a)
 			{
+				WorkingDirectory = workDir,
 				UseShellExecute = false,
 				CreateNoWindow = true,
 			};

@@ -145,8 +145,6 @@ namespace FFmpegDotNet
 					Codec = item.codec,
 				});
 			}
-
-			File.Delete(filePath);
 		}
 
 		public string FormatName { get; internal set; }
