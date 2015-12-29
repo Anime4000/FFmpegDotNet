@@ -109,3 +109,5 @@ new FFmpeg.Process().ExtractAttachment("/home/anime4000/kawaii.mp4", "/home/anim
 
 ## Contribute
 This code written in C# 6.0, so you need Visual Studio 2015
+
+Mono/Xamarin also compatible, aslong having C# 6.0 support
