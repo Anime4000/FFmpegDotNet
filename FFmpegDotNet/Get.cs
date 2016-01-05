@@ -108,7 +108,7 @@ namespace FFmpegDotNet
 
 				int.TryParse(item.sample, out sample);
 
-				Regex rbit = new Regex(@"(fltp|\d+)");
+				Regex rbit = new Regex(@"(flt|fltp|\d+)");
 				Match mbit = rbit.Match(item.bitdepth);
 				if (mbit.Success)
 				{
