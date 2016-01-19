@@ -41,6 +41,7 @@ namespace FFmpegDotNet
 							width = a.Attribute("width").Value,
 							height = a.Attribute("height").Value,
 							fps = a.Attribute("r_frame_rate").Value,
+							duration = a.Attribute("duration").Value,
 						};
 
 			var audio = from a in xml.Descendants("stream")
@@ -53,6 +54,7 @@ namespace FFmpegDotNet
 							sample = a.Attribute("sample_rate").Value,
 							bitdepth = a.Attribute("sample_fmt").Value,
                             channel = a.Attribute("channels").Value,
+							duration = a.Attribute("duration").Value,
 						};
 
 			var subtitle = from a in xml.Descendants("stream")
@@ -99,7 +101,8 @@ namespace FFmpegDotNet
 					BitPerColour = bpc,
 					Width = w,
 					Height = h,
-					FrameRate = num / den
+					FrameRate = num / den,
+					Duration = float.Parse(item.duration)
 				});
 			}
 
@@ -136,6 +139,7 @@ namespace FFmpegDotNet
 					SampleRate = sample,
 					BitDepth = bitdepth,
 					Channel = channel,
+					Duration = float.Parse(item.duration)
 				});
 			}
 
