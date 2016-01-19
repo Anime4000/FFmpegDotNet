@@ -41,6 +41,7 @@ namespace FFmpegDotNet
 							width = a.Attribute("width").Value,
 							height = a.Attribute("height").Value,
 							fps = a.Attribute("r_frame_rate").Value,
+							framecount = a.Attribute("nb_frames").Value,
 							duration = a.Attribute("duration").Value,
 						};
 
@@ -82,15 +83,19 @@ namespace FFmpegDotNet
 				int bpc = 8;
 				int w = 0;
 				int h = 0;
+				int fc = 0;
 				float num = 0;
 				float den = 0;
+				float time = 0;
 
 				int.TryParse(item.bpc, out bpc);
 				int.TryParse(item.width, out w);
 				int.TryParse(item.height, out h);
+				int.TryParse(item.framecount, out fc);
 
 				float.TryParse(item.fps.Split('/')[0], out num);
 				float.TryParse(item.fps.Split('/')[1], out den);
+				float.TryParse(item.duration, out time);
 
 				Video.Add(new StreamVideo
 				{
@@ -102,7 +107,8 @@ namespace FFmpegDotNet
 					Width = w,
 					Height = h,
 					FrameRate = num / den,
-					Duration = float.Parse(item.duration)
+					FrameCount = fc,
+					Duration = time
 				});
 			}
 
@@ -111,6 +117,7 @@ namespace FFmpegDotNet
 				int sample = 44100;
 				int bitdepth = 16;
 				int channel = 2;
+				float time = 0;
 
 				int.TryParse(item.sample, out sample);
 
@@ -131,6 +138,8 @@ namespace FFmpegDotNet
 
 				int.TryParse(item.channel, out channel);
 
+				float.TryParse(item.duration, out time);
+
 				Audio.Add(new StreamAudio
 				{
 					Id = item.id,
@@ -139,7 +148,7 @@ namespace FFmpegDotNet
 					SampleRate = sample,
 					BitDepth = bitdepth,
 					Channel = channel,
-					Duration = float.Parse(item.duration)
+					Duration = time
 				});
 			}
 
