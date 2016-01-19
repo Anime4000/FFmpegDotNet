@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace FFmpegDotNet
 {
@@ -19,14 +20,38 @@ namespace FFmpegDotNet
 			}
 		}
 
-		public class Process
+		public int FrameCount(string filePath)
 		{
-			internal string Print(string filePath)
-			{
-				var f = Path.Combine(Path.GetTempPath(), $"nemu_{new Random().Next(0, 999999999):D9}.xml");
-				new Run().Execute($"\"{Probe}\" -print_format xml -show_format -show_streams \"{filePath}\" > \"{f}\"", Path.GetTempPath());
-				return f;
-			}
-		}
+			var file = Path.Combine(Path.GetTempPath(), $"nemu_{new Random().Next(0, 999999999):D9}");
+			new Run().Execute($"\"{Bin}\" -hide_banner -i \"{filePath}\" -vcodec copy -an -sn -dn -f null - 2> {file}", Path.GetTempPath());
+
+			string text = File.ReadAllText(file);
+			var match = Regex.Matches(text, @"frame=(\d+)", RegexOptions.Multiline);
+
+			int frames = 0;
+			int.TryParse(match[match.Count - 1].Groups[1].Value, out frames);
+
+			if (File.Exists(file))
+				File.Delete(file);
+
+			return frames;
+        }
+
+		public int FrameCountAccurate(string filePath)
+		{
+			var file = Path.Combine(Path.GetTempPath(), $"nemu_{new Random().Next(0, 999999999):D9}");
+			new Run().Equals($"\"{Probe}\" -threads {Environment.ProcessorCount * 2} -v quiet -pretty -print_format csv -select_streams v:0 -count_frames -show_entries \"stream=nb_read_frames\" > {file}");
+
+			string text = File.ReadAllText(file);
+			var match = Regex.Match(text, @"stream,(\d+)");
+
+			int frames = 0;
+			int.TryParse(match.Groups[1].Value, out frames);
+
+			if (File.Exists(file))
+				File.Delete(file);
+
+			return frames;
+        }
 	}
 }

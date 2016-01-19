@@ -15,7 +15,10 @@ namespace FFmpegDotNet
 
 		public Get(string filePath)
 		{
-			var xml = XDocument.Load(new FFmpeg.Process().Print(filePath));
+			var file = Path.Combine(Path.GetTempPath(), $"nemu_{new Random().Next(0, 999999999):D9}.xml");
+			new Run().Execute($"\"{FFmpeg.Probe}\" -print_format xml -show_format -show_streams \"{filePath}\" > \"{file}\"", Path.GetTempPath());
+
+			var xml = XDocument.Load(file);
 			var format = from a in xml.Descendants("format")
 						 select new
 						 {
@@ -145,6 +148,9 @@ namespace FFmpegDotNet
 					Codec = item.codec,
 				});
 			}
+
+			// remove xml
+			File.Delete(file);
 		}
 
 		public string FormatName { get; internal set; }
