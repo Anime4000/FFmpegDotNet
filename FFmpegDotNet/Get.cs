@@ -30,11 +30,13 @@ namespace FFmpegDotNet
 						 };
 
 			var video = from a in xml.Descendants("stream")
-						where string.Equals("video", (string)a.Attribute("codec_type"))
+						where string.Equals("video", (string)a.Attribute("codec_type"), IC)
+						from b in a.Descendants("tag")
+						where string.Equals("language", (string)b.Attribute("key"), IC)
 						select new
 						{
 							id = (int)a.Attribute("index"),
-							lang = a.Element("tag").Attribute("value").Value,
+							lang = b.Attribute("value")?.Value ?? "und",
 							codec = a.Attribute("codec_name").Value,
 							pixfmt = a.Attribute("pix_fmt").Value,
 							bpc = a.Attribute("bits_per_raw_sample")?.Value,
@@ -45,11 +47,13 @@ namespace FFmpegDotNet
 						};
 
 			var audio = from a in xml.Descendants("stream")
-						where string.Equals("audio", (string)a.Attribute("codec_type"))
+						where string.Equals("audio", (string)a.Attribute("codec_type"), IC)
+						from b in a.Descendants("tag")
+						where string.Equals("language", (string)b.Attribute("key"), IC)
 						select new
 						{
 							id = (int)a.Attribute("index"),
-							lang = a.Element("tag").Attribute("value").Value,
+							lang = b.Attribute("value")?.Value ?? "und",
 							codec = a.Attribute("codec_name").Value,
 							sample = a.Attribute("sample_rate").Value,
 							bitdepth = a.Attribute("sample_fmt").Value,
@@ -57,21 +61,27 @@ namespace FFmpegDotNet
 						};
 
 			var subtitle = from a in xml.Descendants("stream")
-						   where string.Equals("subtitle", (string)a.Attribute("codec_type"))
+						   where string.Equals("subtitle", (string)a.Attribute("codec_type"), IC)
+						   from b in a.Descendants("tag")
+						   where string.Equals("language", (string)b.Attribute("key"), IC)
 						   select new
 						   {
 							   id = (int)a.Attribute("index"),
-							   lang = a.Element("tag").Attribute("value").Value,
+							   lang = b.Attribute("value")?.Value ?? "und",
 							   codec = a.Attribute("codec_name").Value,
 						   };
 
 			var attachment = from a in xml.Descendants("stream")
-							 where string.Equals("attachment", (string)a.Attribute("codec_type"))
+							 where string.Equals("attachment", (string)a.Attribute("codec_type"), IC)
+							 from b in a.Descendants("tag")
+							 where string.Equals("filename", (string)b.Attribute("key"), IC)
+							 from c in a.Descendants("tag")
+							 where string.Equals("mimetype", (string)c.Attribute("key"), IC)
 							 select new
 							 {
 								 id = (int)a.Attribute("index"),
-								 filename = a.Element("tag")?.Attribute("value").Value,
-								 mimetype = string.Empty, // how to get second element under this block?
+								 filename = b.Attribute("value")?.Value,
+								 mimetype = c.Attribute("value")?.Value,
 
 							 };
 
@@ -133,23 +143,14 @@ namespace FFmpegDotNet
 				int channel = 2;
 
 				int.TryParse(item.sample, out sample);
-
-				Regex rbit = new Regex(@"(flt|fltp|\d+)");
-				Match mbit = rbit.Match(item.bitdepth);
-				if (mbit.Success)
-				{
-					var val = mbit.Groups[1].Value;
-
-					if (string.Equals("fltp", val, IC))
-						bitdepth = 16;
-					else
-						int.TryParse(val, out bitdepth);
-
-					if (bitdepth >= 32)
-						bitdepth = 24;
-				}
-
+				int.TryParse(item.bitdepth, out bitdepth);
 				int.TryParse(item.channel, out channel);
+
+				if (bitdepth == 0)
+					bitdepth = 16;
+
+				if (bitdepth >= 32)
+					bitdepth = 24;
 
 				Audio.Add(new StreamAudio
 				{
