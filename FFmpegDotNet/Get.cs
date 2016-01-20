@@ -24,9 +24,9 @@ namespace FFmpegDotNet
 						 {
 							 fmt = a.Attribute("format_name").Value,
 							 fmtlong = a.Attribute("format_long_name").Value,
-							 duration = a.Attribute("duration").Value,
 							 size = a.Attribute("size").Value,
-							 bitrate = a.Attribute("bit_rate").Value
+							 bitrate = a.Attribute("bit_rate").Value,
+							 duration = a.Attribute("duration").Value,
 						 };
 
 			var video = from a in xml.Descendants("stream")
@@ -34,15 +34,14 @@ namespace FFmpegDotNet
 						select new
 						{
 							id = (int)a.Attribute("index"),
-							lang = a.Element("tag")?.Attribute("key").Value == "language" ? a.Element("tag").Attribute("value").Value : "und",
+							lang = a.Element("tag").Attribute("value").Value,
 							codec = a.Attribute("codec_name").Value,
 							pixfmt = a.Attribute("pix_fmt").Value,
 							bpc = a.Attribute("bits_per_raw_sample").Value,
 							width = a.Attribute("width").Value,
 							height = a.Attribute("height").Value,
 							fps = a.Attribute("r_frame_rate").Value,
-							framecount = a.Attribute("nb_frames").Value,
-							duration = a.Attribute("duration").Value,
+							framecount = a.Attribute("nb_frames")?.Value,
 						};
 
 			var audio = from a in xml.Descendants("stream")
@@ -50,12 +49,11 @@ namespace FFmpegDotNet
 						select new
 						{
 							id = (int)a.Attribute("index"),
-							lang = a.Element("tag")?.Attribute("key").Value == "language" ? a.Element("tag").Attribute("value").Value : "und",
+							lang = a.Element("tag").Attribute("value").Value,
 							codec = a.Attribute("codec_name").Value,
 							sample = a.Attribute("sample_rate").Value,
 							bitdepth = a.Attribute("sample_fmt").Value,
                             channel = a.Attribute("channels").Value,
-							duration = a.Attribute("duration").Value,
 						};
 
 			var subtitle = from a in xml.Descendants("stream")
@@ -63,17 +61,27 @@ namespace FFmpegDotNet
 						   select new
 						   {
 							   id = (int)a.Attribute("index"),
-							   lang = a.Element("tag")?.Attribute("key").Value == "language" ? a.Element("tag").Attribute("value").Value : "und",
+							   lang = a.Element("tag").Attribute("value").Value,
 							   codec = a.Attribute("codec_name").Value,
 						   };
+
+			var attachment = from a in xml.Descendants("stream")
+							 where string.Equals("attachment", (string)a.Attribute("codec_type"))
+							 select new
+							 {
+								 id = (int)a.Attribute("index"),
+								 filename = a.Element("tag")?.Attribute("value").Value,
+								 mimetype = string.Empty, // how to get second element under this block?
+
+							 };
 
 			foreach (var item in format)
 			{
 				FormatName = item.fmt;
 				FormatNameFull = item.fmtlong;
-				Duration = float.Parse(item.duration);
 				FileSize = ulong.Parse(item.size);
 				BitRate = ulong.Parse(item.bitrate);
+				Duration = float.Parse(item.duration);
 
 				break; // single only
 			}
@@ -86,7 +94,6 @@ namespace FFmpegDotNet
 				int fc = 0;
 				float num = 0;
 				float den = 0;
-				float time = 0;
 
 				int.TryParse(item.bpc, out bpc);
 				int.TryParse(item.width, out w);
@@ -95,12 +102,11 @@ namespace FFmpegDotNet
 
 				float.TryParse(item.fps.Split('/')[0], out num);
 				float.TryParse(item.fps.Split('/')[1], out den);
-				float.TryParse(item.duration, out time);
 
 				Video.Add(new StreamVideo
 				{
 					Id = item.id,
-					Language = item.lang,
+					Language = string.IsNullOrEmpty(item.lang) ? "und" : item.lang,
 					Codec = item.codec,
 					PixelFormat = item.pixfmt,
 					BitPerColour = bpc,
@@ -108,7 +114,6 @@ namespace FFmpegDotNet
 					Height = h,
 					FrameRate = num / den,
 					FrameCount = fc,
-					Duration = time
 				});
 			}
 
@@ -117,7 +122,6 @@ namespace FFmpegDotNet
 				int sample = 44100;
 				int bitdepth = 16;
 				int channel = 2;
-				float time = 0;
 
 				int.TryParse(item.sample, out sample);
 
@@ -138,17 +142,14 @@ namespace FFmpegDotNet
 
 				int.TryParse(item.channel, out channel);
 
-				float.TryParse(item.duration, out time);
-
 				Audio.Add(new StreamAudio
 				{
 					Id = item.id,
-					Language = item.lang,
+					Language = string.IsNullOrEmpty(item.lang) ? "und" : item.lang,
 					Codec = item.codec,
 					SampleRate = sample,
 					BitDepth = bitdepth,
 					Channel = channel,
-					Duration = time
 				});
 			}
 
@@ -157,8 +158,18 @@ namespace FFmpegDotNet
 				Subtitle.Add(new StreamSubtitle
 				{
 					Id = item.id,
-					Language = item.lang,
+					Language = string.IsNullOrEmpty(item.lang) ? "und" : item.lang,
 					Codec = item.codec,
+				});
+			}
+
+			foreach (var item in attachment)
+			{
+				Attachment.Add(new StreamAttachment
+				{
+					Id = item.id,
+					FileName = item.filename,
+					MimeType = item.mimetype
 				});
 			}
 
@@ -168,12 +179,13 @@ namespace FFmpegDotNet
 
 		public string FormatName { get; internal set; }
 		public string FormatNameFull { get; internal set; }
-		public float Duration { get; internal set; }
 		public ulong FileSize { get; internal set; }
 		public ulong BitRate { get; internal set; }
-		
+		public float Duration { get; internal set; }
+
 		public List<StreamVideo> Video { get; internal set; } = new List<StreamVideo>();
 		public List<StreamAudio> Audio { get; internal set; } = new List<StreamAudio>();
 		public List<StreamSubtitle> Subtitle { get; internal set; } = new List<StreamSubtitle>();
+		public List<StreamAttachment> Attachment { get; internal set; } = new List<StreamAttachment>();
 	}
 }

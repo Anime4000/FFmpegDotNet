@@ -13,6 +13,5 @@ namespace FFmpegDotNet
 		public int Height { get; internal set; }
 		public float FrameRate { get; internal set; }
 		public int FrameCount { get; internal set; }
-		public float Duration { get; internal set; }
 	}
 }
