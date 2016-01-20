@@ -37,7 +37,7 @@ namespace FFmpegDotNet
 							lang = a.Element("tag").Attribute("value").Value,
 							codec = a.Attribute("codec_name").Value,
 							pixfmt = a.Attribute("pix_fmt").Value,
-							bpc = a.Attribute("bits_per_raw_sample").Value,
+							bpc = a.Attribute("bits_per_raw_sample")?.Value,
 							width = a.Attribute("width").Value,
 							height = a.Attribute("height").Value,
 							fps = a.Attribute("r_frame_rate").Value,
@@ -102,6 +102,15 @@ namespace FFmpegDotNet
 
 				float.TryParse(item.fps.Split('/')[0], out num);
 				float.TryParse(item.fps.Split('/')[1], out den);
+
+				if (bpc == 0)
+				{
+					var match = Regex.Match(item.pixfmt, @"yuv\d+p(\d+)");
+					if (match.Success)
+						int.TryParse(match.Groups[1].Value, out bpc);
+					else
+						bpc = 8;
+				}
 
 				Video.Add(new StreamVideo
 				{

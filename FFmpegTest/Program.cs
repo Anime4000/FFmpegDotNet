@@ -10,7 +10,7 @@ namespace FFmpegTest
 	{
 		static void Main(string[] args)
 		{
-			var info = new FFmpeg.Stream(@"D:\Users\Anime4000\Videos\Anime\Girls und Panzer\[CBM]_Girls_und_Panzer_-_01_-_Tankery,_Here_It_Comes!_[720p]_[0579A167].mkv");
+			var info = new FFmpeg.Stream(@"D:\Users\Anime4000\Videos\Fast Furious 7 2015 1080p BRRip x265\Furious.7.2015.1080p.BRRip.x265.HEVC-zsewdc.mkv");
 
 			string fmtName = info.FormatName;
 			string fmtName2 = info.FormatNameFull;
