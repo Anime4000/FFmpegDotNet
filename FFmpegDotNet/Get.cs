@@ -31,12 +31,10 @@ namespace FFmpegDotNet
 
 			var video = from a in xml.Descendants("stream")
 						where string.Equals("video", (string)a.Attribute("codec_type"), IC)
-						from b in a.Descendants("tag")
-						where string.Equals("language", (string)b.Attribute("key"), IC)
 						select new
 						{
 							id = (int)a.Attribute("index"),
-							lang = b?.Attribute("value")?.Value ?? "und",
+							lang = a.Elements("tag").SingleOrDefault(x => x.Attribute("key").Value.ToLower() == "language")?.Attribute("value").Value,
 							codec = a.Attribute("codec_name").Value,
 							pixfmt = a.Attribute("pix_fmt").Value,
 							bpc = a.Attribute("bits_per_raw_sample")?.Value,
@@ -48,12 +46,10 @@ namespace FFmpegDotNet
 
 			var audio = from a in xml.Descendants("stream")
 						where string.Equals("audio", (string)a.Attribute("codec_type"), IC)
-						from b in a.Descendants("tag")
-						where string.Equals("language", (string)b.Attribute("key"), IC)
 						select new
 						{
 							id = (int)a.Attribute("index"),
-							lang = b?.Attribute("value")?.Value ?? "und",
+							lang = a.Elements("tag").SingleOrDefault(x => x.Attribute("key").Value.ToLower() == "language")?.Attribute("value").Value,
 							codec = a.Attribute("codec_name").Value,
 							sample = a.Attribute("sample_rate").Value,
 							bitdepth = a.Attribute("sample_fmt").Value,
@@ -62,26 +58,20 @@ namespace FFmpegDotNet
 
 			var subtitle = from a in xml.Descendants("stream")
 						   where string.Equals("subtitle", (string)a.Attribute("codec_type"), IC)
-						   from b in a.Descendants("tag")
-						   where string.Equals("language", (string)b.Attribute("key"), IC)
 						   select new
 						   {
 							   id = (int)a.Attribute("index"),
-							   lang = b?.Attribute("value")?.Value ?? "und",
+							   lang = a.Elements("tag").SingleOrDefault(x => x.Attribute("key").Value.ToLower() == "language")?.Attribute("value").Value,
 							   codec = a.Attribute("codec_name").Value,
 						   };
 
 			var attachment = from a in xml.Descendants("stream")
 							 where string.Equals("attachment", (string)a.Attribute("codec_type"), IC)
-							 from b in a.Descendants("tag")
-							 where string.Equals("filename", (string)b.Attribute("key"), IC)
-							 from c in a.Descendants("tag")
-							 where string.Equals("mimetype", (string)c.Attribute("key"), IC)
 							 select new
 							 {
 								 id = (int)a.Attribute("index"),
-								 filename = b.Attribute("value")?.Value,
-								 mimetype = c.Attribute("value")?.Value,
+								 filename = a.Elements("tag").SingleOrDefault(x => x.Attribute("key").Value.ToLower() == "filename")?.Attribute("value").Value,
+								 mimetype = a.Elements("tag").SingleOrDefault(x => x.Attribute("key").Value.ToLower() == "mimetype")?.Attribute("value").Value,
 
 							 };
 
