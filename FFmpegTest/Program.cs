@@ -10,7 +10,7 @@ namespace FFmpegTest
 	{
 		static void Main(string[] args)
 		{
-			var info = new FFmpeg.Stream(@"D:\Users\Anime4000\Videos\Anime\Girls und Panzer\[CBM]_Girls_und_Panzer_-_01_-_Tankery,_Here_It_Comes!_[720p]_[0579A167].mkv");
+			var info = new FFmpeg.Stream(@"C:\Users\Anime4000\AppData\Local\Temp\ifme\video0000_und.hevc");
 
 			string fmtName = info.FormatName;
 			string fmtName2 = info.FormatNameFull;

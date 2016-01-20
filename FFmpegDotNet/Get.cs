@@ -25,8 +25,8 @@ namespace FFmpegDotNet
 							 fmt = a.Attribute("format_name").Value,
 							 fmtlong = a.Attribute("format_long_name").Value,
 							 size = a.Attribute("size").Value,
-							 bitrate = a.Attribute("bit_rate").Value,
-							 duration = a.Attribute("duration").Value,
+							 bitrate = a.Attribute("bit_rate")?.Value,
+							 duration = a.Attribute("duration")?.Value,
 						 };
 
 			var video = from a in xml.Descendants("stream")
@@ -77,11 +77,19 @@ namespace FFmpegDotNet
 
 			foreach (var item in format)
 			{
+				ulong filesize = 0;
+				ulong bitrate = 0;
+				float time = 0;
+
+				ulong.TryParse(item.size, out filesize);
+				ulong.TryParse(item.bitrate, out bitrate);
+				float.TryParse(item.duration, out time);
+
 				FormatName = item.fmt;
 				FormatNameFull = item.fmtlong;
-				FileSize = ulong.Parse(item.size);
-				BitRate = ulong.Parse(item.bitrate);
-				Duration = float.Parse(item.duration);
+				FileSize = filesize;
+				BitRate = bitrate;
+				Duration = time;
 
 				break; // single only
 			}
