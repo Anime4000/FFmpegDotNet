@@ -36,7 +36,7 @@ namespace FFmpegDotNet
 						select new
 						{
 							id = (int)a.Attribute("index"),
-							lang = b.Attribute("value")?.Value ?? "und",
+							lang = b?.Attribute("value")?.Value ?? "und",
 							codec = a.Attribute("codec_name").Value,
 							pixfmt = a.Attribute("pix_fmt").Value,
 							bpc = a.Attribute("bits_per_raw_sample")?.Value,
@@ -53,7 +53,7 @@ namespace FFmpegDotNet
 						select new
 						{
 							id = (int)a.Attribute("index"),
-							lang = b.Attribute("value")?.Value ?? "und",
+							lang = b?.Attribute("value")?.Value ?? "und",
 							codec = a.Attribute("codec_name").Value,
 							sample = a.Attribute("sample_rate").Value,
 							bitdepth = a.Attribute("sample_fmt").Value,
@@ -67,7 +67,7 @@ namespace FFmpegDotNet
 						   select new
 						   {
 							   id = (int)a.Attribute("index"),
-							   lang = b.Attribute("value")?.Value ?? "und",
+							   lang = b?.Attribute("value")?.Value ?? "und",
 							   codec = a.Attribute("codec_name").Value,
 						   };
 

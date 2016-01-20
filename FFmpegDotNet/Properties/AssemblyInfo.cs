@@ -9,9 +9,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("FFmpeg Wrapper for .NET")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Anime4000")]
-[assembly: AssemblyProduct("FFmpeg")]
+[assembly: AssemblyProduct("Internet Friendly Media Encoder")]
 [assembly: AssemblyCopyright("Anime4000, GNU GPL v2")]
-[assembly: AssemblyTrademark("FFmpeg")]
+[assembly: AssemblyTrademark("Internet Friendly Media Encoder")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.5")]
-[assembly: AssemblyFileVersion("0.5")]
+[assembly: AssemblyVersion("0.6")]
+[assembly: AssemblyFileVersion("0.6")]
