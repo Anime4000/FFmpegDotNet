@@ -1,19 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 
 namespace FFmpegDotNet
 {
 	internal class Run
 	{
+		internal static string errorString { get; set; }
 
 		internal int Execute(string args, string workDir)
 		{
 			var p = new Process();
 			var c = string.Empty;
 			var a = string.Empty;
+
+			errorString = string.Empty; // make sure no old text holding
 
 			Environment.SetEnvironmentVariable("FFMPEGDOTNET", args, EnvironmentVariableTarget.Process);
 
@@ -33,12 +33,24 @@ namespace FFmpegDotNet
 				WorkingDirectory = workDir,
 				UseShellExecute = false,
 				CreateNoWindow = true,
+
+				RedirectStandardError = true,
 			};
 
+			p.ErrorDataReceived += new DataReceivedEventHandler(consoleErrorHandler);
+
 			p.Start();
+
+			p.BeginErrorReadLine();
+
 			p.WaitForExit();
 
 			return p.ExitCode;
 		}
+
+		private void consoleErrorHandler(object sendingProcess, DataReceivedEventArgs errLine)
+		{
+			errorString += $"{errLine.Data}\n";
+        }
 	}
 }

@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace FFmpegDotNet
@@ -26,7 +23,7 @@ namespace FFmpegDotNet
 			new Run().Execute($"\"{Bin}\" -hide_banner -i \"{filePath}\" -vcodec copy -an -sn -dn -f null - 2> {file}", Path.GetTempPath());
 
 			string text = File.ReadAllText(file);
-			var match = Regex.Matches(text, @"frame=(\d+)", RegexOptions.Multiline);
+			var match = Regex.Matches(text, @"(\d+) fps=", RegexOptions.Multiline);
 
 			int frames = 0;
 			int.TryParse(match[match.Count - 1].Groups[1].Value, out frames);

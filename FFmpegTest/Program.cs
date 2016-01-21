@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using FFmpegDotNet;
 
 namespace FFmpegTest
@@ -10,13 +7,15 @@ namespace FFmpegTest
 	{
 		static void Main(string[] args)
 		{
-			var info = new FFmpeg.Stream(@"C:\Users\Anime4000\AppData\Local\Temp\ifme\video0000_und.hevc");
+			var info = new FFmpeg.Stream(@"D:\Users\Anime4000\Videos\ASDF COMP- BALLZ.avs");
 
 			string fmtName = info.FormatName;
 			string fmtName2 = info.FormatNameFull;
 			float time = info.Duration;
 			ulong size = info.FileSize; // in bytes
 			ulong bitRate = info.BitRate; // in bits
+
+			Console.WriteLine($"Format: {fmtName} ({fmtName2}), {size}bytes, {bitRate}bps, {time}sec\n");
 
 			foreach (var item in info.Video)
 			{

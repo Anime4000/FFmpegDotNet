@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Xml;
 using System.Xml.Linq;
 
 namespace FFmpegDotNet
@@ -16,13 +14,13 @@ namespace FFmpegDotNet
 		public Get(string filePath)
 		{
 			var file = Path.Combine(Path.GetTempPath(), $"nemu_{new Random().Next(0, 999999999):D9}.xml");
-			new Run().Execute($"\"{FFmpeg.Probe}\" -print_format xml -show_format -show_streams \"{filePath}\" > \"{file}\"", Path.GetTempPath());
+			var ec = new Run().Execute($"\"{FFmpeg.Probe}\" -hide_banner -print_format xml -show_format -show_streams \"{filePath}\" > \"{file}\"", Path.GetTempPath());
 
 			var xml = XDocument.Load(file);
 			var format = from a in xml.Descendants("format")
 						 select new
 						 {
-							 fmt = a.Attribute("format_name").Value,
+							 fmtcode = a.Attribute("format_name").Value,
 							 fmtlong = a.Attribute("format_long_name").Value,
 							 size = a.Attribute("size").Value,
 							 bitrate = a.Attribute("bit_rate")?.Value,
@@ -85,7 +83,7 @@ namespace FFmpegDotNet
 				ulong.TryParse(item.bitrate, out bitrate);
 				float.TryParse(item.duration, out time);
 
-				FormatName = item.fmt;
+				FormatName = item.fmtcode;
 				FormatNameFull = item.fmtlong;
 				FileSize = filesize;
 				BitRate = bitrate;
@@ -183,6 +181,14 @@ namespace FFmpegDotNet
 
 			// remove xml
 			File.Delete(file);
+
+			// error display
+			if (ec > 0)
+			{
+				Console.ForegroundColor = ConsoleColor.Red;
+				Console.Write(Run.errorString);
+				Console.ResetColor();
+			}
 		}
 
 		public string FormatName { get; internal set; }
