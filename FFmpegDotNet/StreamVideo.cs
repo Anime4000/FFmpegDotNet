@@ -6,7 +6,9 @@
 		public int BitPerColour { get; internal set; }
 		public int Width { get; internal set; }
 		public int Height { get; internal set; }
+		public bool IsConstantFrameRate { get; internal set; }
 		public float FrameRate { get; internal set; }
+		public float FrameRateAvg { get; internal set; }
 		public int FrameCount { get; internal set; }
 	}
 }

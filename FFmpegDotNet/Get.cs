@@ -39,6 +39,7 @@ namespace FFmpegDotNet
 							width = a.Attribute("width").Value,
 							height = a.Attribute("height").Value,
 							fps = a.Attribute("r_frame_rate").Value,
+							afps = a.Attribute("avg_frame_rate").Value,
 							framecount = a.Attribute("nb_frames")?.Value,
 						};
 
@@ -98,16 +99,24 @@ namespace FFmpegDotNet
 				int w = 0;
 				int h = 0;
 				int fc = 0;
-				float num = 0;
-				float den = 0;
 
 				int.TryParse(item.bpc, out bpc);
 				int.TryParse(item.width, out w);
 				int.TryParse(item.height, out h);
 				int.TryParse(item.framecount, out fc);
 
+				float num = 0;
+				float den = 0;
+
 				float.TryParse(item.fps.Split('/')[0], out num);
 				float.TryParse(item.fps.Split('/')[1], out den);
+
+				float fps = num / den;
+
+				float.TryParse(item.afps.Split('/')[0], out num);
+				float.TryParse(item.afps.Split('/')[1], out den);
+
+				float afps = num / den;
 
 				if (bpc == 0)
 				{
@@ -127,7 +136,9 @@ namespace FFmpegDotNet
 					BitPerColour = bpc,
 					Width = w,
 					Height = h,
-					FrameRate = num / den,
+					IsConstantFrameRate = fps == afps,
+					FrameRate = fps,
+					FrameRateAvg = afps,
 					FrameCount = fc,
 				});
 			}
