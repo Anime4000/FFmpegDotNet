@@ -24,8 +24,8 @@ namespace FFmpegDotNet
             }
 			else
 			{
-				c = "eval";
-				a = "$FFMPEGDOTNET";
+				c = "bash";
+				a = "-c 'eval $FFMPEGDOTNET'";
 			}
 
 			p.StartInfo = new ProcessStartInfo(c, a)
