@@ -32,14 +32,14 @@ namespace FFmpegDotNet
 						select new
 						{
 							id = (int)a.Attribute("index"),
-							lang = a.Elements("tag").SingleOrDefault(x => x.Attribute("key").Value.ToLower() == "language")?.Attribute("value").Value,
+							lang = a.Elements("tag").SingleOrDefault(x => string.Equals(x.Attribute("key").Value, "language", IC))?.Attribute("value")?.Value,
 							codec = a.Attribute("codec_name").Value,
-							pixfmt = a.Attribute("pix_fmt").Value,
+							pixfmt = a.Attribute("pix_fmt")?.Value,
 							bpc = a.Attribute("bits_per_raw_sample")?.Value,
 							width = a.Attribute("width").Value,
 							height = a.Attribute("height").Value,
-							fps = a.Attribute("r_frame_rate").Value,
-							afps = a.Attribute("avg_frame_rate").Value,
+							fps = a.Attribute("r_frame_rate")?.Value,
+							afps = a.Attribute("avg_frame_rate")?.Value,
 							framecount = a.Attribute("nb_frames")?.Value,
 						};
 
@@ -48,8 +48,8 @@ namespace FFmpegDotNet
 						select new
 						{
 							id = (int)a.Attribute("index"),
-							lang = a.Elements("tag").SingleOrDefault(x => x.Attribute("key").Value.ToLower() == "language")?.Attribute("value").Value,
-							codec = a.Attribute("codec_name").Value,
+							lang = a.Elements("tag").SingleOrDefault(x => string.Equals(x.Attribute("key").Value, "language", IC))?.Attribute("value")?.Value,
+                            codec = a.Attribute("codec_name").Value,
 							sample = a.Attribute("sample_rate").Value,
 							bitdepth = a.Attribute("sample_fmt").Value,
                             channel = a.Attribute("channels").Value,
@@ -60,19 +60,19 @@ namespace FFmpegDotNet
 						   select new
 						   {
 							   id = (int)a.Attribute("index"),
-							   lang = a.Elements("tag").SingleOrDefault(x => x.Attribute("key").Value.ToLower() == "language")?.Attribute("value").Value,
-							   codec = a.Attribute("codec_name").Value,
+							   lang = a.Elements("tag").SingleOrDefault(x => string.Equals(x.Attribute("key").Value, "language", IC))?.Attribute("value")?.Value,
+                               codec = a.Attribute("codec_name").Value,
 						   };
 
-			var attachment = from a in xml.Descendants("stream")
-							 where string.Equals("attachment", (string)a.Attribute("codec_type"), IC)
-							 select new
-							 {
-								 id = (int)a.Attribute("index"),
-								 filename = a.Elements("tag").SingleOrDefault(x => x.Attribute("key").Value.ToLower() == "filename")?.Attribute("value").Value,
-								 mimetype = a.Elements("tag").SingleOrDefault(x => x.Attribute("key").Value.ToLower() == "mimetype")?.Attribute("value").Value,
+            var attachment = from a in xml.Descendants("stream")
+                             where string.Equals("attachment", (string)a.Attribute("codec_type"), IC)
+                             select new
+                             {
+                                 id = (int)a.Attribute("index"),
+                                 filename = a.Elements("tag").SingleOrDefault(x => string.Equals(x.Attribute("key").Value, "filename", IC))?.Attribute("value")?.Value,
+                                 mimetype = a.Elements("tag").SingleOrDefault(x => string.Equals(x.Attribute("key").Value, "mimetype", IC))?.Attribute("value")?.Value,
 
-							 };
+                             };
 
 			foreach (var item in format)
 			{
