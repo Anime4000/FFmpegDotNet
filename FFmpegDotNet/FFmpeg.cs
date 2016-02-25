@@ -6,8 +6,8 @@ namespace FFmpegDotNet
 {
 	public class FFmpeg
 	{
-		public static string Bin { get; set; } = Path.Combine("ffmpeg");
-		public static string Probe { get; set; } = Path.Combine("ffprobe");
+        public static string Main { get; set; } = "ffmpeg";
+		public static string Probe { get; set; } = "ffprobe";
 
 		public class Stream : Get
 		{
@@ -20,7 +20,7 @@ namespace FFmpegDotNet
 		public int FrameCount(string filePath)
 		{
 			var file = Path.Combine(Path.GetTempPath(), $"nemu_{new Random().Next(0, 999999999):D9}");
-			new Run().Execute($"\"{Bin}\" -hide_banner -i \"{filePath}\" -vcodec copy -an -sn -dn -f null - 2> {file}", Path.GetTempPath());
+			new Run().Execute($"\"{Main}\" -hide_banner -i \"{filePath}\" -vcodec copy -an -sn -dn -f null - 2> {file}", Path.GetTempPath());
 
 			string text = File.ReadAllText(file);
 			var match = Regex.Matches(text, @"(\d+) fps=", RegexOptions.Multiline);

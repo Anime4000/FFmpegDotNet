@@ -2,8 +2,8 @@
 {
 	public class StreamVideo : StreamCommon
 	{
-		public string PixelFormat { get; internal set; }
-		public int BitPerColour { get; internal set; }
+		public int Chroma { get; internal set; }
+		public int BitDepth { get; internal set; }
 		public int Width { get; internal set; }
 		public int Height { get; internal set; }
 		public bool IsConstantFrameRate { get; internal set; }

@@ -74,6 +74,8 @@ namespace FFmpegDotNet
 
                              };
 
+            
+
 			foreach (var item in format)
 			{
 				ulong filesize = 0;
@@ -96,6 +98,7 @@ namespace FFmpegDotNet
 			foreach (var item in video)
 			{
 				int bpc = 8;
+                int pix = 420;
 				int w = 0;
 				int h = 0;
 				int fc = 0;
@@ -118,22 +121,31 @@ namespace FFmpegDotNet
 
 				float afps = num / den;
 
-				if (bpc == 0)
-				{
-					var match = Regex.Match(item.pixfmt, @"yuv\d+p(\d+)");
-					if (match.Success)
-						int.TryParse(match.Groups[1].Value, out bpc);
-					else
-						bpc = 8;
-				}
+                if (string.IsNullOrEmpty(item.pixfmt))
+                {
+                    var mpix = Regex.Match(item.pixfmt, @"yuv(\d+)");
+                    if (mpix.Success)
+                        int.TryParse(mpix.Groups[1].Value, out pix);
+                    else
+                        pix = 420;
+                }
+                
+                if (bpc == 0)
+                {
+                    var mbpc = Regex.Match(item.pixfmt, @"yuv\d+p(\d+)");
+                    if (mbpc.Success)
+                        int.TryParse(mbpc.Groups[1].Value, out bpc);
+                    else
+                        bpc = 8;
+                }
 
-				Video.Add(new StreamVideo
+                Video.Add(new StreamVideo
 				{
 					Id = item.id,
 					Language = string.IsNullOrEmpty(item.lang) ? "und" : item.lang,
 					Codec = item.codec,
-					PixelFormat = item.pixfmt,
-					BitPerColour = bpc,
+					Chroma = pix,
+					BitDepth = bpc,
 					Width = w,
 					Height = h,
 					IsConstantFrameRate = fps == afps,
@@ -202,13 +214,13 @@ namespace FFmpegDotNet
 			}
 		}
 
-		public string FormatName { get; internal set; }
-		public string FormatNameFull { get; internal set; }
 		public ulong FileSize { get; internal set; }
 		public ulong BitRate { get; internal set; }
 		public float Duration { get; internal set; }
+        public string FormatName { get; internal set; }
+        public string FormatNameFull { get; internal set; }
 
-		public List<StreamVideo> Video { get; internal set; } = new List<StreamVideo>();
+        public List<StreamVideo> Video { get; internal set; } = new List<StreamVideo>();
 		public List<StreamAudio> Audio { get; internal set; } = new List<StreamAudio>();
 		public List<StreamSubtitle> Subtitle { get; internal set; } = new List<StreamSubtitle>();
 		public List<StreamAttachment> Attachment { get; internal set; } = new List<StreamAttachment>();
