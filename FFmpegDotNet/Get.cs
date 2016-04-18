@@ -76,7 +76,7 @@ namespace FFmpegDotNet
 
                                  };
 
-
+                FilePath = file;
 
                 foreach (var item in format)
                 {
@@ -222,6 +222,7 @@ namespace FFmpegDotNet
             }
         }
 
+        public string FilePath { get; internal set; }
 		public ulong FileSize { get; internal set; }
 		public ulong BitRate { get; internal set; }
 		public float Duration { get; internal set; }
