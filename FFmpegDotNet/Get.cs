@@ -76,7 +76,7 @@ namespace FFmpegDotNet
 
                                  };
 
-                FilePath = file;
+                FilePath = filePath;
 
                 foreach (var item in format)
                 {
