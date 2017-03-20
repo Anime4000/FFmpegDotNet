@@ -43,6 +43,7 @@ namespace FFmpegDotNet
                                 fps = a.Attribute("r_frame_rate")?.Value,
                                 afps = a.Attribute("avg_frame_rate")?.Value,
                                 framecount = a.Attribute("nb_frames")?.Value,
+								duration = a.Attribute("duration")?.Value,
                             };
 
                 var audio = from a in xml.Descendants("stream")
@@ -55,7 +56,8 @@ namespace FFmpegDotNet
                                 sample = a.Attribute("sample_rate").Value,
                                 bitdepth = a.Attribute("sample_fmt").Value,
                                 channel = a.Attribute("channels").Value,
-                            };
+								duration = a.Attribute("duration")?.Value,
+							};
 
                 var subtitle = from a in xml.Descendants("stream")
                                where string.Equals("subtitle", (string)a.Attribute("codec_type"), IC)
@@ -123,6 +125,11 @@ namespace FFmpegDotNet
 
                     float afps = num / den;
 
+					float du = Duration;
+					if (!string.IsNullOrEmpty(item.duration))
+						if (float.TryParse(item.duration, out du))
+							du = Duration;
+
                     if (string.IsNullOrEmpty(item.pixfmt))
                     {
                         var mpix = Regex.Match(item.pixfmt, @"yuv(\d+)");
@@ -150,10 +157,11 @@ namespace FFmpegDotNet
                         BitDepth = bpc,
                         Width = w,
                         Height = h,
-                        IsConstantFrameRate = fps == afps,
+                        FrameRateConstant = fps == afps,
                         FrameRate = fps,
                         FrameRateAvg = afps,
                         FrameCount = fc,
+						Duration = du,
                     });
                 }
 
@@ -173,7 +181,10 @@ namespace FFmpegDotNet
                     if (bitdepth >= 32)
                         bitdepth = 24;
 
-                    Audio.Add(new StreamAudio
+					float du = 0;
+					float.TryParse(item.duration, out du);
+
+					Audio.Add(new StreamAudio
                     {
                         Id = item.id,
                         Language = string.IsNullOrEmpty(item.lang) ? "und" : item.lang,
@@ -181,6 +192,7 @@ namespace FFmpegDotNet
                         SampleRate = sample,
                         BitDepth = bitdepth,
                         Channel = channel,
+						Duration = du,
                     });
                 }
 
