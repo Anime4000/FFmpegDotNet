@@ -6,10 +6,10 @@ namespace FFmpegDotNet
 {
 	public class FFmpeg
 	{
-        public static string Main { get; set; } = "ffmpeg";
-		public static string Probe { get; set; } = "ffprobe";
+        public static string Main { get; set; } = Path.Combine("plugin", $"ffmpeg32", "ffmpeg");
+		public static string Probe { get; set; } = Path.Combine("plugin", $"ffmpeg32", "ffprobe");
 
-		public class Stream : Get
+        public class Stream : Get
 		{
 			public Stream(string filePath) : base(filePath)
 			{
