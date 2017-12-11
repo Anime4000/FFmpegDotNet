@@ -229,17 +229,21 @@ namespace FFmpegDotNet
             }
             catch (Exception)
             {
-
-                throw;
+                Console.Error.Write("FFmpegDotNet [warn]: Incompatible FFmpeg or Invalid file stream.");
             }
         }
 
-        public string FilePath { get; internal set; }
-		public ulong FileSize { get; internal set; }
-		public ulong BitRate { get; internal set; }
-		public float Duration { get; internal set; }
-        public string FormatName { get; internal set; }
-        public string FormatNameFull { get; internal set; }
+        public Get()
+        {
+
+        }
+
+        public string FilePath { get; internal set; } = string.Empty;
+        public ulong FileSize { get; internal set; } = 0;
+        public ulong BitRate { get; internal set; } = 0;
+        public float Duration { get; internal set; } = 0;
+        public string FormatName { get; internal set; } = "NEW";
+        public string FormatNameFull { get; internal set; } = "Blank media";
 
         public List<StreamVideo> Video { get; internal set; } = new List<StreamVideo>();
 		public List<StreamAudio> Audio { get; internal set; } = new List<StreamAudio>();

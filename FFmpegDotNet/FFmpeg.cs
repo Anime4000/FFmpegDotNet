@@ -11,7 +11,12 @@ namespace FFmpegDotNet
 
         public class Stream : Get
 		{
-			public Stream(string filePath) : base(filePath)
+            public Stream() : base()
+            {
+
+            }
+
+            public Stream(string filePath) : base(filePath)
 			{
 
 			}
