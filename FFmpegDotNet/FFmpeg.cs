@@ -132,8 +132,10 @@ namespace FFmpegDotNet
             }
 
             public string FilePath { get; internal set; } = string.Empty;
+#pragma warning disable CS3003 // Type is not CLS-compliant
             public ulong FileSize { get; internal set; } = 0;
             public ulong BitRate { get; internal set; } = 0;
+#pragma warning restore CS3003 // Type is not CLS-compliant
             public float Duration { get; internal set; } = 0;
             public string FormatName { get; internal set; } = "NEW";
             public string FormatNameFull { get; internal set; } = "Blank media";
