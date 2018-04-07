@@ -7,7 +7,7 @@ namespace FFmpegTest
 	{
 		static void Main(string[] args)
 		{
-			var info = new FFmpeg.Stream(@"D:\Users\Anime4000\Videos\ASDF COMP- BALLZ.mp4");
+            var info = new FFmpeg.GetInfo(@"D:\Users\Anime4000\Videos\ASDF COMP- BALLZ.mp4");
 
 			string fmtName = info.FormatName;
 			string fmtName2 = info.FormatNameFull;
@@ -23,12 +23,12 @@ namespace FFmpegTest
 				Console.Write("Type             : Video\n");
 				Console.Write($"Language         : {item.Language}\n");
 				Console.Write($"Codec            : {item.Codec}\n");
-				Console.Write($"Pixel Format     : {item.PixelFormat}\n");
-				Console.Write($"Bit per Colour   : {item.BitPerColour}\n");
+				Console.Write($"Pixel Format     : {item.Chroma}\n");
+				Console.Write($"Bit per Colour   : {item.BitDepth}\n");
 				Console.Write($"Resolution       : {item.Width}x{item.Height}\n");
 				Console.Write($"Frame Rate       : {item.FrameRate:#.##}fps\n");
 				Console.Write($"Frame Rate Avg   : {item.FrameRateAvg:#.##}fps\n");
-				Console.Write($"Frame Rate Mode  : {(item.IsConstantFrameRate ? "Constant" : "Variable")}\n");
+				Console.Write($"Frame Rate Mode  : {(item.FrameRateConstant ? "Constant" : "Variable")}\n");
 				Console.Write($"Frame Count      : {item.FrameCount} frame's\n");
 				Console.Write($"\n");
 			}

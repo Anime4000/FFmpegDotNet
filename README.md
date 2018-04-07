@@ -11,51 +11,64 @@ Using `FFmpegDotNet` very stright forward
 
 ### Capture media properties
 ```cs
-// Set FFmpeg & FFprobe install path
-FFmpeg.Bin = "/bin/ffmpeg";
-FFmpeg.Probe = "/bin/ffprobe";
+		static void Main(string[] args)
+		{
+			FFmpeg.FFmpegProbe = Path.Combine("ffmpeg", "64", "ffprobe"); // set binary file
 
-var info = new FFmpeg.Stream("/home/anime4000/kawaii.mp4");
+            var info = new FFmpeg.GetInfo(@"D:\Users\Anime4000\Videos\ASDF COMP- BALLZ.mp4");
 
-string fmtName = info.FormatName;
-string fmtName2 = info.FormatNameFull;
-float time = info.Duration;
-ulong size = info.FileSize; // in bytes
-ulong bitRate = info.BitRate; // in bits
+			string fmtName = info.FormatName;
+			string fmtName2 = info.FormatNameFull;
+			float time = info.Duration;
+			ulong size = info.FileSize; // in bytes
+			ulong bitRate = info.BitRate; // in bits
 
-foreach (var item in info.Video)
-{
-	Console.Write("Type: Video\n");
-	Console.Write($"ID: {item.Id}\n");
-	Console.Write($"Language: {item.Language}\n");
-	Console.Write($"Codec: {item.Codec}\n");
-	Console.Write($"Pixel Format: {item.PixelFormat}\n");
-	Console.Write($"Bit per Colour: {item.BitPerColour}\n");
-	Console.Write($"Resolution: {item.Width}x{item.Height}\n");
-	Console.Write($"Frame Rate: {item.FrameRate}fps\n");
-	Console.Write($"\n");
-}
+			Console.WriteLine($"Format: {fmtName} ({fmtName2}),\nSize: {size}bytes,\nBitrate: {bitRate}bps,\nLength: {time}sec\n");
 
-foreach (var item in info.Audio)
-{
-	Console.Write("Type: Audio\n");
-	Console.Write($"ID: {item.Id}\n");
-	Console.Write($"Language: {item.Language}\n");
-	Console.Write($"Codec: {item.Codec}\n");
-	Console.Write($"Sample Rate: {item.SampleRate}Hz\n");
-	Console.Write($"Bit Depth: {item.BitDepth} Bit (raw)\n");
-	Console.Write($"Channels: {item.Channel}\n");
-	Console.Write($"\n");
-}
+			foreach (var item in info.Video)
+			{
+				Console.Write($"ID               : {item.Id}\n");
+				Console.Write("Type             : Video\n");
+				Console.Write($"Language         : {item.Language}\n");
+				Console.Write($"Codec            : {item.Codec}\n");
+				Console.Write($"Pixel Format     : {item.Chroma}\n");
+				Console.Write($"Bit per Colour   : {item.BitDepth}\n");
+				Console.Write($"Resolution       : {item.Width}x{item.Height}\n");
+				Console.Write($"Frame Rate       : {item.FrameRate:#.##}fps\n");
+				Console.Write($"Frame Rate Avg   : {item.FrameRateAvg:#.##}fps\n");
+				Console.Write($"Frame Rate Mode  : {(item.FrameRateConstant ? "Constant" : "Variable")}\n");
+				Console.Write($"Frame Count      : {item.FrameCount} frame's\n");
+				Console.Write($"\n");
+			}
 
-foreach (var item in info.Subtitle)
-{
-	Console.Write("Type: Subtitle\n");
-	Console.Write($"ID: {item.Id}\n");
-	Console.Write($"Language: {item.Language}\n");
-	Console.Write($"Codec: {item.Codec}\n");
-	Console.Write($"\n");
-}
+			foreach (var item in info.Audio)
+			{
+				Console.Write($"ID               : {item.Id}\n");
+				Console.Write("Type             : Audio\n");
+				Console.Write($"Language         : {item.Language}\n");
+				Console.Write($"Codec            : {item.Codec}\n");
+				Console.Write($"Sample Rate      : {item.SampleRate}Hz\n");
+				Console.Write($"Bit Depth        : {item.BitDepth} Bit (raw)\n");
+				Console.Write($"Channels         : {item.Channel}\n");
+				Console.Write($"\n");
+			}
+
+			foreach (var item in info.Subtitle)
+			{
+				Console.Write($"ID              : {item.Id}\n");
+				Console.Write("Type            : Subtitle\n");
+				Console.Write($"Language        : {item.Language}\n");
+				Console.Write($"Codec           : {item.Codec}\n");
+				Console.Write($"\n");
+			}
+
+			foreach (var item in info.Attachment)
+			{
+				Console.Write($"Attachment: {item.Id}, {item.FileName}, {item.MimeType}\n");
+			}
+
+			Console.Read();
+		}
 ```
 
 With that code, it will display like this (console)
@@ -108,4 +121,13 @@ new FFmpeg.Process().ExtractAttachment("/home/anime4000/kawaii.mp4", "/home/anim
 ```
 
 ## Contribute
-This code written in C# 6.0, so you need Visual Studio 2015
+This code written in C# 7.0, so you need Visual Studio 2017
+
+### Clone
+You need clone submodule and do checkout, follow this
+```
+git clone https://github.com/Anime4000/FFmpegDotNet
+cd FFmpegDotNet
+git submodule add https://github.com/JamesNK/Newtonsoft.Json
+```
+Then you can open Visual Studio Project file
