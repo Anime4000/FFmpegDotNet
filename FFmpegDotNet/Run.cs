@@ -1,56 +1,40 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 namespace FFmpegDotNet
 {
-	internal class Run
-	{
-		internal static string errorString { get; set; }
+    internal class Run
+    {
+        internal string Output { get; set; } = string.Empty;
 
-		internal int Execute(string args, string workDir)
-		{
-			var p = new Process();
-			var c = string.Empty;
-			var a = string.Empty;
+        internal Run(string FileMedia)
+        {
+            var p = new Process();
 
-			errorString = string.Empty; // make sure no old text holding
+            var exe = FFmpeg.FFmpegProbe;
+            var arg = $"-hide_banner -print_format json -show_format -show_streams \"{FileMedia}\"";
 
-			Environment.SetEnvironmentVariable("FFMPEGDOTNET", args, EnvironmentVariableTarget.Process);
+            if (OS.IsWindows) exe += ".exe";
 
-			if (OS.IsWindows)
-			{
-				c = "cmd";
-				a = $"/c %FFMPEGDOTNET%";
-            }
-			else
-			{
-				c = "bash";
-				a = "-c 'eval $FFMPEGDOTNET'";
-			}
+            p.StartInfo = new ProcessStartInfo(exe, arg)
+            {
+                UseShellExecute = false,
+                CreateNoWindow = true,
 
-			p.StartInfo = new ProcessStartInfo(c, a)
-			{
-				WorkingDirectory = workDir,
-				UseShellExecute = false,
-				CreateNoWindow = true,
+                RedirectStandardOutput = true
+            };
 
-				RedirectStandardError = true,
-			};
+            p.OutputDataReceived += new DataReceivedEventHandler(ConsoleStandardHandler);
 
-			p.ErrorDataReceived += new DataReceivedEventHandler(consoleErrorHandler);
+            p.Start();
 
-			p.Start();
+            p.BeginOutputReadLine();
 
-			p.BeginErrorReadLine();
-
-			p.WaitForExit();
-
-			return p.ExitCode;
-		}
-
-		private void consoleErrorHandler(object sendingProcess, DataReceivedEventArgs errLine)
-		{
-			errorString += $"{errLine.Data}\n";
+            p.WaitForExit();
         }
-	}
+
+        private void ConsoleStandardHandler(object s, DataReceivedEventArgs e)
+        {
+            Output += e.Data;
+        }
+    }
 }

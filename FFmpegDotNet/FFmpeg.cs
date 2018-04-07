@@ -1,59 +1,147 @@
 ﻿using System;
 using System.IO;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
+
+using Newtonsoft.Json;
 
 namespace FFmpegDotNet
 {
 	public class FFmpeg
 	{
-        public static string Main { get; set; } = Path.Combine("plugin", $"ffmpeg32", "ffmpeg");
-		public static string Probe { get; set; } = Path.Combine("plugin", $"ffmpeg32", "ffprobe");
+        private static StringComparison IgnoreCase { get { return StringComparison.InvariantCultureIgnoreCase; } }
 
-        public class Stream : Get
-		{
-            public Stream() : base()
+        public static string FFmpegProbe { get; set; } = Path.Combine("ffmpeg", "64", "ffprobe");
+
+        public class GetInfo
+        {
+            public GetInfo(string FileMedia)
             {
+                dynamic json = JsonConvert.DeserializeObject(new Run(FileMedia).Output);
 
+                // General info
+                FilePath = json.format.filename;
+                FileSize = json.format.size;
+                BitRate = json.format.bit_rate;
+                Duration = json.format.duration;
+                FormatName = json.format.format_name;
+                FormatNameFull = json.format.format_long_name;
+
+                // Capture stream type
+                foreach (var stream in json.streams)
+                {
+                    string type = stream.codec_type;
+
+                    if (string.Equals(type, "video", IgnoreCase))
+                    {
+                        string r = stream.r_frame_rate;
+                        float.TryParse(r.Split('/')[0], out float rn);
+                        float.TryParse(r.Split('/')[1], out float rd);
+                        float rfps = rn / rd;
+
+                        string a = stream.avg_frame_rate;
+                        float.TryParse(a.Split('/')[0], out float an);
+                        float.TryParse(a.Split('/')[1], out float ad);
+                        float afps = an / ad;
+
+                        int pix = 420;
+                        if (!string.IsNullOrEmpty((string)stream.pix_fmt))
+                        {
+                            var mpix = Regex.Match((string)stream.pix_fmt, @"yuv(\d+)");
+
+                            if (mpix.Success) int.TryParse(mpix.Groups[1].Value, out pix);
+                            else pix = 420;
+                        }
+
+                        int bpc = stream.bits_per_raw_sample;
+                        if (bpc == 0)
+                        {
+                            var mbpc = Regex.Match((string)stream.pix_fmt, @"yuv\d+p(\d+)");
+
+                            if (mbpc.Success) int.TryParse(mbpc.Groups[1].Value, out bpc);
+                            else bpc = 8;
+                        }
+
+                        string lang = stream.tags.language;
+                        if (string.IsNullOrEmpty(lang)) lang = "und";
+
+                        Video.Add(new StreamVideo
+                        {
+                            Id = stream.index,
+                            Language = lang,
+                            Codec = stream.codec_name,
+                            Chroma = pix,
+                            BitDepth = stream.bits_per_raw_sample,
+                            Width = stream.width,
+                            Height = stream.height,
+                            FrameRateConstant = rfps == afps,
+                            FrameRate = rfps,
+                            FrameRateAvg = afps,
+                            FrameCount = (int)(Duration * afps),
+                            Duration = Duration,
+                        });
+                    }
+
+                    if (string.Equals(type, "audio", IgnoreCase))
+                    {
+                        int.TryParse((string)stream.sample_rate, out int sample);
+                        int.TryParse((string)stream.sample_fmt, out int bitdepth);
+                        int.TryParse((string)stream.channels, out int channel);
+
+                        if (bitdepth == 0) bitdepth = 16;
+                        else if (bitdepth >= 32) bitdepth = 24;
+
+                        string lang = stream.tags.language;
+                        if (string.IsNullOrEmpty(lang)) lang = "und";
+
+                        Audio.Add(new StreamAudio
+                        {
+                            Id = stream.index,
+                            Language = lang,
+                            Codec = stream.codec_name,
+                            SampleRate = sample,
+                            BitDepth = bitdepth,
+                            Channel = channel,
+                            Duration = Duration,
+                        });
+                    }
+
+                    if (string.Equals(type, "subtitle", IgnoreCase))
+                    {
+                        string lang = stream.tags.language;
+                        if (string.IsNullOrEmpty(lang)) lang = "und";
+
+                        Subtitle.Add(new StreamSubtitle
+                        {
+                            Id = stream.index,
+                            Language = lang,
+                            Codec = stream.codec_name,
+                        });
+                    }
+
+                    if (string.Equals(type, "attachment", IgnoreCase))
+                    {
+                        Attachment.Add(new StreamAttachment
+                        {
+                            Id = stream.index,
+                            FileName = stream.tags.filename,
+                            MimeType = stream.tags.mimetype
+                        });
+                    }
+                }
             }
 
-            public Stream(string filePath) : base(filePath)
-			{
+            public string FilePath { get; internal set; } = string.Empty;
+            public ulong FileSize { get; internal set; } = 0;
+            public ulong BitRate { get; internal set; } = 0;
+            public float Duration { get; internal set; } = 0;
+            public string FormatName { get; internal set; } = "NEW";
+            public string FormatNameFull { get; internal set; } = "Blank media";
 
-			}
-		}
-
-		public int FrameCount(string filePath, int mapId)
-		{
-			var file = Path.Combine(Path.GetTempPath(), $"nemu_{new Random().Next(0, 999999999):D9}");
-			new Run().Execute($"\"{Main}\" -hide_banner -i \"{filePath}\" -map 0:{mapId} -vcodec copy -an -sn -dn -f null - 2> {file}", Path.GetTempPath());
-
-			string text = File.ReadAllText(file);
-			var match = Regex.Matches(text, @"(\d+) fps=", RegexOptions.Multiline);
-
-			int frames = 0;
-			int.TryParse(match[match.Count - 1].Groups[1].Value, out frames);
-
-			if (File.Exists(file))
-				File.Delete(file);
-
-			return frames;
+            public List<StreamVideo> Video { get; internal set; } = new List<StreamVideo>();
+            public List<StreamAudio> Audio { get; internal set; } = new List<StreamAudio>();
+            public List<StreamSubtitle> Subtitle { get; internal set; } = new List<StreamSubtitle>();
+            public List<StreamAttachment> Attachment { get; internal set; } = new List<StreamAttachment>();
         }
-
-		public int FrameCountAccurate(string filePath, int trackId)
-		{
-			var file = Path.Combine(Path.GetTempPath(), $"nemu_{new Random().Next(0, 999999999):D9}");
-			new Run().Equals($"\"{Probe}\" -threads {Environment.ProcessorCount * 2} -v quiet -pretty -print_format csv -select_streams v:{trackId} -count_frames -show_entries \"stream=nb_read_frames\" {filePath} > {file}");
-
-			string text = File.ReadAllText(file);
-			var match = Regex.Match(text, @"stream,(\d+)");
-
-			int frames = 0;
-			int.TryParse(match.Groups[1].Value, out frames);
-
-			if (File.Exists(file))
-				File.Delete(file);
-
-			return frames;
-        }
-	}
+    }
 }
