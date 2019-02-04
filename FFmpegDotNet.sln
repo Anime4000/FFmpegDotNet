@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FFmpegDotNet", "FFmpegDotNe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FFmpegTest", "FFmpegTest\FFmpegTest.csproj", "{31EDC313-6014-405D-82FA-8676882AC827}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Newtonsoft.Json", "..\Newtonsoft.Json\Src\Newtonsoft.Json\Newtonsoft.Json.csproj", "{BEA99FF6-9F42-42CF-A3C1-CBE606D02163}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{31EDC313-6014-405D-82FA-8676882AC827}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{31EDC313-6014-405D-82FA-8676882AC827}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{31EDC313-6014-405D-82FA-8676882AC827}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BEA99FF6-9F42-42CF-A3C1-CBE606D02163}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEA99FF6-9F42-42CF-A3C1-CBE606D02163}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEA99FF6-9F42-42CF-A3C1-CBE606D02163}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEA99FF6-9F42-42CF-A3C1-CBE606D02163}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
