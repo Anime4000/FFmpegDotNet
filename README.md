@@ -121,11 +121,12 @@ new FFmpeg.Process().ExtractAttachment("/home/anime4000/kawaii.mp4", "/home/anim
 This code written in C# 7.2, so you need Visual Studio 2017
 
 ### Clone
-You need clone submodule and do checkout, follow this
+You need clone these in same root directory, so FFmpegDotNet can link
 ```
 git clone https://github.com/Anime4000/FFmpegDotNet
-cd FFmpegDotNet
-git submodule add https://github.com/JamesNK/Newtonsoft.Json
+git clone https://github.com/JamesNK/Newtonsoft.Json
 MSBuild
 ```
 Then you can open Visual Studio Project file
+
+To use in your project, is better to use "Add existing project" and dont forget to include Newtonsoft.Json as well
